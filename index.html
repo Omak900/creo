@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Unity WebGL Player | Test Game Creo</title>
+	</head>
+	<body style="text-align: center">
+		<canvas
+			id="unity-canvas"
+			width="960"
+			height="600"
+			style="
+				width: 960px;
+				height: 600px;
+				background: url('Build/Test Creo.jpg.gz') center / cover;
+			"
+		></canvas>
+		<script src="Build/Test Creo.loader.js"></script>
+		<script src="./mraid.js"></script>
+		<script>
+			if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+				// Mobile device style: fill the whole browser client area with the game canvas:
+				var meta = document.createElement("meta");
+				meta.name = "viewport";
+				meta.content =
+					"width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+				document.getElementsByTagName("head")[0].appendChild(meta);
+				var userAgent = navigator.userAgent || navigator.vendor;
+				if (mraid.getState() === "loading") {
+					// If the SDK is still loading, add a listener for the 'ready' event:
+					mraid.addEventListener("ready", onSdkReady);
+
+					// Otherwise, if the SDK is ready, execute your function:
+				} else {
+					onSdkReady();
+				}
+
+				// Implement a function that shows the ad when it first renders:
+				function onSdkReady() {
+					// The viewableChange event fires if the ad container's viewability status changes.
+
+					// Add a listener for the viewabilityChange event, to handle pausing and resuming:
+					mraid.addEventListener("viewableChange", viewableChangeHandler);
+
+					// The isViewable method returns whether the ad container is viewable on the screen.
+					if (mraid.isViewable()) {
+						// If the ad container is visible, play the ad:
+						showMyAd();
+					}
+				}
+				function viewableChangeHandler(viewable) {
+					if (viewable) {
+						// If the ad is viewable, show the ad:
+						showMyAd();
+					} else {
+						// If not, pause the ad.
+					}
+				}
+
+				// Implement a function for executing the ad:
+				function showMyAd() {
+					// Insert code for showing your playable ad.
+					let mobile = "";
+					if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+						mobile = "IOS";
+					} else if (/Android/i.test(navigator.userAgent)) {
+						mobile = "Android";
+					}
+					switch (mobile) {
+						case "Android":
+							mraid.open(
+								"https://play.google.com/store/search?q=slots%20era&c=apps&hl=ru&gl=US"
+							);
+							break;
+
+						case "iOS":
+							mraid.open("https://itunes.apple.com/us/yourgame?mt=8");
+							break;
+					}
+				}
+			}
+
+			createUnityInstance(document.querySelector("#unity-canvas"), {
+				dataUrl: "Build/Test Creo.data.gz",
+				frameworkUrl: "Build/Test Creo.framework.js.gz",
+				codeUrl: "Build/Test Creo.wasm.gz",
+				streamingAssetsUrl: "StreamingAssets",
+				companyName: "DefaultCompany",
+				productName: "Test Game Creo",
+				productVersion: "0.1",
+				// matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+				// devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+			});
+		</script>
+	</body>
+</html>
